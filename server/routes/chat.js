@@ -1,9 +1,20 @@
 // server/routes/chat.js
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const { GoogleGenerativeAI, GoogleGenerativeAIFetchError } = require("@google/generative-ai");
 const Product = require("../models/Product");
 const router = express.Router();
 
+// Rate Limiter 
+const chatLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20,
+  message: {
+    error: "Too many requests, please try again later.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 // Debug: Check if API key is loaded
 console.log("API Key exists:", !!process.env.GEMINI_API_KEY);
 console.log("API Key prefix:", process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.substring(0, 15) + "..." : "MISSING");
@@ -16,7 +27,7 @@ if (!process.env.GEMINI_API_KEY) {
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Gemini Config
-const modelName = process.env.GEMINI_MODEL_NAME
+const modelName = process.env.GEMINI_MODEL_NAME || "gemini-2.5-flash";
 const model = genAI.getGenerativeModel({ model: modelName });
 
 const PRODUCT_KEYWORDS = ["protein", "supplement", "muscle", "gain", "whey", "creatine", "mass"];
@@ -49,14 +60,14 @@ const getFallbackResponse = (message) => {
   }
 };
 
-router.post("/", async (req, res) => {
+router.post("/", chatLimiter,async (req, res) => {
   try {
     const { message } = req.body;
     if (!message?.trim()) {
       return res.status(400).json({ error: "Message is required" });
     }
 
-    console.log("Processing message:", message.substring(0, 50));
+    console.log("Processing chat message:", { length: message.length, timestamp: Date.now() });
 
     const prompt = `${SYSTEM_PROMPT}\n\nUser: ${message}`;
 

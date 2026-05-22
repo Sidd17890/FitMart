@@ -6,21 +6,7 @@ const Product = require('../models/Product');
 const admin = require('../firebaseAdmin');
 const verifyFirebaseToken = require('../middleware/verifyFirebaseToken');
 const verifyAdmin = require('../middleware/verifyAdmin');
-
-// ── Helper: resolve Firebase UID → { displayName, email } ─────────────────
-// Returns "—" gracefully if user is deleted or UID is invalid
-async function resolveFirebaseUser(uid) {
-  try {
-    const userRecord = await admin.auth().getUser(uid);
-    return {
-      displayName: userRecord.displayName || "—",
-      email: userRecord.email || "—",
-      photoURL: userRecord.photoURL || null,
-    };
-  } catch {
-    return { displayName: "—", email: "—" };
-  }
-}
+const resolveFirebaseUser = require('../lib/resolveFirebaseUser');
 
 // ── Helper: get the start date based on the time range filter
 // 'today'  -> start of today

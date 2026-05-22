@@ -64,7 +64,7 @@ If this is your first time contributing to open source, follow every step below.
 
 ### Step 1: Fork the Repository
 
-Go to the [FitMart GitHub page](https://github.com/parthnarkar/FitMart) and click the **Fork** button (top right corner).
+Go to the [FitMart GitHub page](https://github.com/parthbuilds-community/FitMart) and click the **Fork** button (top right corner).
 
 This creates your own copy of the project under your GitHub account.
 
@@ -86,7 +86,7 @@ cd FitMart
 This connects your local copy to the original FitMart repo so you can pull in future updates:
 
 ```bash
-git remote add upstream https://github.com/parthnarkar/FitMart.git
+git remote add upstream https://github.com/parthbuilds-community/FitMart.git
 ```
 
 Verify it worked:
@@ -135,7 +135,7 @@ git push origin main
 
 ### Finding Issues to Work On
 
-Browse the [Issues tab](https://github.com/parthnarkar/FitMart/issues) and look for these labels:
+Browse the [Issues tab](https://github.com/parthbuilds-community/FitMart/issues) and look for these labels:
 
 | Label | Meaning |
 |-------|---------|
@@ -271,7 +271,7 @@ chore: update dependencies
 
 Once your changes are pushed to your fork:
 
-1. Go to the original [FitMart repo](https://github.com/parthnarkar/FitMart).
+1. Go to the original [FitMart repo](https://github.com/parthbuilds-community/FitMart).
 2. You'll see a **"Compare & pull request"** banner — click it.
 3. Fill out the PR template completely (see below).
 4. Set the base branch to `main`.
@@ -456,6 +456,88 @@ Stuck? Don't worry — everyone was a beginner once.
 - 🐛 **Open a new issue** with the `question` label
 - 📖 **Re-read the README** — the setup steps cover most common problems
 - 🔐 **For security issues**, follow the responsible disclosure process in [`docs/SECURITY.md`](SECURITY.md) — do not open a public issue
+
+---
+
+## 🧪 Feature Setup Guides
+Below are two developer-facing setup guides added here for convenience: local development admin authentication (useful for contributors testing admin pages) and the first-purchase email feature setup. These are summarized from dedicated docs in `docs/` and include the most common setup steps and environment variables.
+
+### Local Development Admin (quick guide)
+Purpose: let contributors run and test admin pages locally without using production Firebase admin credentials.
+
+- When to use: `NODE_ENV=development` on the server and client.
+- Server-side: a development-only endpoint `POST /api/dev/login` is registered only in development and returns a lightweight token of the form `dev:<email>` when the provided email matches `DEV_ADMIN_EMAIL` in the server `.env`.
+- Client-side: a dev login page is available at `/dev-login` (development only). It calls the server endpoint and stores the returned token in `localStorage` as `dev_token`.
+- Middleware behavior: `verifyFirebaseToken` recognizes `dev:` tokens when not in production and sets `req.user`. `verifyAdmin` allows the dev admin when `DEV_ADMIN_EMAIL` or `DEV_ADMIN_UID` matches.
+
+Key environment variables (development)
+- Server: `DEV_ADMIN_EMAIL` (required), `DEV_ADMIN_UID` (optional), `NODE_ENV=development`, `MONGO_URI`.
+- Client: `VITE_DEV_ADMIN_EMAIL` (should match server setting), `VITE_API_URL`.
+
+Quick start (local)
+1. Create `server/.env` from `server/.env.example` and set `DEV_ADMIN_EMAIL` and `MONGO_URI`.
+2. Create `client/.env` from `client/.env.example` and set `VITE_DEV_ADMIN_EMAIL` and `VITE_API_URL`.
+3. Start MongoDB.
+4. Run server and client:
+```bash
+cd server
+npm install
+npm run dev
+cd ../client
+npm install
+npm run dev
+```
+5. Open `http://localhost:5173/dev-login`, enter `DEV_ADMIN_EMAIL`, and submit. You will be redirected to `/admin/dashboard` with a local dev session.
+
+Security notes
+- Dev tokens are local-only and NOT signed — they are for development and testing only.
+- Dev endpoints and token acceptance are disabled in production (`NODE_ENV=production`).
+- Never commit `.env` files with secrets.
+
+Files referenced (added/modified)
+- `server/routes/devAuth.js` (new) — development-only login endpoint
+- `server/middleware/verifyFirebaseToken.js` (modified) — accepts `dev:` tokens in development
+- `server/middleware/verifyAdmin.js` (modified) — allows `DEV_ADMIN_EMAIL`/`DEV_ADMIN_UID` in development
+- `client/src/components/DevAdminLogin.jsx` (new) — dev login UI
+- `client/src/utils/getAuthHeaders.js` (modified) — reads `dev_token` from `localStorage` in development
+
+For the full contributor guide and more details, see `docs/LOCAL_DEV_ADMIN_README.md`.
+
+### First-purchase Email Feature (quick guide)
+Purpose: send a welcome email to users after their first paid order. This guide summarizes setup, testing, and operational notes.
+
+Overview
+- The server contains a modular email pipeline: `emailService` (Nodemailer), `emailTemplates`, and `firstPurchaseEmailService` which is called after an order is marked paid.
+- Email sending is asynchronous and fails gracefully (does not block the payment flow).
+
+Required environment variables
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE` (`true`/`false`), `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, `APP_BASE_URL` (client URL used in email CTAs).
+
+Quick start & testing
+1. Add SMTP vars to `server/.env` (see above). For Gmail use an App Password.
+2. Start server and client (see steps in Local Development Admin quick start).
+3. Run a demo payment flow or call the demo endpoint to simulate a paid order:
+```bash
+POST http://localhost:5000/api/payment/demo-success
+Content-Type: application/json
+
+{ "userId": "test-user-id-123" }
+```
+4. Verify server logs for email send confirmation and that `UserProfile.firstPurchaseEmailSentAt` was set.
+
+Testing scenarios to consider
+- First purchase success (email should be sent once).
+- Duplicate prevention (subsequent purchases should not re-send the email).
+- Missing SMTP config (email sending should be skipped and app should not crash).
+
+Files referenced (added/modified)
+- `server/services/emailService.js` (NEW) — Nodemailer wrapper and transporter management
+- `server/services/emailTemplates.js` (NEW) — HTML/text templates generator
+- `server/services/firstPurchaseEmailService.js` (NEW) — business logic to decide & send emails
+- `server/models/UserProfile.js` (modified) — `email` and `firstPurchaseEmailSentAt` fields
+- `server/routes/payment.js` (modified) — triggers email sending on payment verification and demo-success
+
+For the complete detailed guide, troubleshooting tips, and production recommendations, see `docs/FIRST_PURCHASE_EMAIL_SETUP.md`.
 
 > There are no dumb questions. Ask away! 🙌
 

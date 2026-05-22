@@ -1,7 +1,7 @@
 <div align="center">
 
 <img 
-  src="https://raw.githubusercontent.com/parthnarkar/FitMart/main/client/public/logo.png" 
+  src="https://raw.githubusercontent.com/parthbuilds-community/FitMart/main/client/public/logo.png" 
   alt="FitMart" 
   width="100"
 />
@@ -27,10 +27,10 @@
 
 <br/>
 
-[![GitHub Stars](https://img.shields.io/github/stars/parthnarkar/FitMart?style=for-the-badge&logo=github)](https://github.com/parthnarkar/FitMart/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/parthnarkar/FitMart?style=for-the-badge&logo=github)](https://github.com/parthnarkar/FitMart/network/members)
-[![GitHub Issues](https://img.shields.io/github/issues/parthnarkar/FitMart?style=for-the-badge&logo=github)](https://github.com/parthnarkar/FitMart/issues)
-[![GitHub PRs](https://img.shields.io/github/issues-pr/parthnarkar/FitMart?style=for-the-badge&logo=github)](https://github.com/parthnarkar/FitMart/pulls)
+[![GitHub Stars](https://img.shields.io/github/stars/parthbuilds-community/FitMart?style=for-the-badge&logo=github)](https://github.com/parthbuilds-community/FitMart/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/parthbuilds-community/FitMart?style=for-the-badge&logo=github)](https://github.com/parthbuilds-community/FitMart/network/members)
+[![GitHub Issues](https://img.shields.io/github/issues/parthbuilds-community/FitMart?style=for-the-badge&logo=github)](https://github.com/parthbuilds-community/FitMart/issues)
+[![GitHub PRs](https://img.shields.io/github/issues-pr/parthbuilds-community/FitMart?style=for-the-badge&logo=github)](https://github.com/parthbuilds-community/FitMart/pulls)
 
 </div>
 
@@ -383,10 +383,28 @@ Make sure you have the following installed:
 
 ---
 
+### 🐳 Local Database via Docker (Optional)
+
+If you don't have a MongoDB Atlas account or prefer to run a local database, you can use the included Docker configuration. This will spin up a local MongoDB instance.
+
+1.  Make sure [Docker](https://www.docker.com/products/docker-desktop/) is installed and running.
+2.  Run the following command in the project root:
+
+```bash
+docker-compose up -d
+```
+
+3.  In your `server/.env`, set `MONGO_URI` to:
+```env
+MONGO_URI=mongodb://localhost:27017
+```
+
+---
+
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/parthnarkar/FitMart.git
+git clone https://github.com/parthbuilds-community/FitMart.git
 cd FitMart
 ```
 
@@ -917,7 +935,7 @@ Please read **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)** for a full guide on
 - Submitting a Pull Request
 - Code style and commit conventions
 
-**New to open source?** Look for issues labelled [`good first issue`](https://github.com/parthnarkar/FitMart/labels/good%20first%20issue) — they're perfect starting points! 🌱
+**New to open source?** Look for issues labelled [`good first issue`](https://github.com/parthbuilds-community/FitMart/labels/good%20first%20issue) — they're perfect starting points! 🌱
 
 ---
 
@@ -925,8 +943,8 @@ Please read **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)** for a full guide on
 
 Thanks to everyone who has contributed to FitMart.
 
-<a href="https://github.com/parthnarkar/FitMart/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=parthnarkar/FitMart" alt="FitMart contributors" />
+<a href="https://github.com/parthbuilds-community/FitMart/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=parthbuilds-community/FitMart" alt="FitMart contributors" />
 </a>
 
 ---

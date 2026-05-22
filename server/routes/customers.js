@@ -7,20 +7,7 @@ const admin = require('../firebaseAdmin');
 const verifyFirebaseToken = require('../middleware/verifyFirebaseToken');
 const verifyAdmin = require('../middleware/verifyAdmin');
 const { sendInactivityReminderEmail } = require('../services/inactiveCustomerEmailService');
-
-// ── Helper: resolve Firebase UID → { displayName, email, photoURL } ───────
-async function resolveFirebaseUser(uid) {
-  try {
-    const u = await admin.auth().getUser(uid);
-    return {
-      displayName: u.displayName || '—',
-      email: u.email || '—',
-      photoURL: u.photoURL || null,
-    };
-  } catch {
-    return { displayName: '—', email: '—', photoURL: null };
-  }
-}
+const resolveFirebaseUser = require('../lib/resolveFirebaseUser');
 
 // ── Segmentation logic ─────────────────────────────────────────────────────
 function getSegment(orderCount, totalSpend) {
