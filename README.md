@@ -552,6 +552,21 @@ VITE_FIREBASE_MEASUREMENT_ID=
 
 ---
 
+## ⚙️ Customisation
+
+### Customising Chat Responses
+
+The fitness assistant's behaviour and tone can be customised without touching route logic. All chat copy is decoupled and stored in `server/config/chatConfig.js`.
+
+- **System prompt** – Edit `SYSTEM_PROMPT` to change the bot's persona and rules for answering.
+- **Fallback responses** – Modify the `FALLBACK_RESPONSES` object to update advice text for common topics (protein, workouts, weight loss).
+- **Product keywords** – Add/remove terms in the `PRODUCT_KEYWORDS` array to control when product suggestions appear.
+- **Formatting** – Modify the `PRODUCT_TEMPLATE` to change how recommended products are styled.
+
+> **Note:** After editing the config file, you must restart the server (`npm run dev` or `npm start`) for the changes to take effect.
+
+---
+
 ## 🌱 Seeding the Database
 
 ### Products
