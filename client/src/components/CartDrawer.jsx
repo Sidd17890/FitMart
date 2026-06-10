@@ -1,4 +1,5 @@
 // src/components/CartDrawer.jsx
+import PropTypes from "prop-types";
 import { useEffect } from "react";
 import { fmt } from "../utils/formatters";
 import { Link } from "react-router-dom";
@@ -228,3 +229,6 @@ function CartDrawer({
 }
 
 export default CartDrawer;
+CartDrawer.propTypes = {
+   // props here
+};

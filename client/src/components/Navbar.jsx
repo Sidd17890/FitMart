@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { signOut } from "firebase/auth";
@@ -213,3 +214,6 @@ export default function Navbar({
     </nav>
   );
 }
+Navbar.propTypes = {
+   // props here
+};
